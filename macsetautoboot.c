@@ -11,8 +11,10 @@
 #include <sys/pciio.h>
 #include <sys/ioctl.h>
 #define BSD_PLATFORM 1
-#else
+#elif defined(__linux__)
 #define LINUX_PLATFORM 1
+#else
+#error "Unsupported platform. This program only supports BSD and Linux systems."
 #endif
 
 int main(int argc, char **argv) {
@@ -24,12 +26,13 @@ int main(int argc, char **argv) {
 	int reg = 0x78;	/* must be 32-bit aligned */
 	uint32_t word;
 	int ret;
+	int fd;
 
 #ifdef BSD_PLATFORM
 	struct pci_io pcio;
 	struct pcisel pcisel;
 
-	int fd = open("/dev/pci0", O_RDWR | O_CLOEXEC);
+	fd = open("/dev/pci0", O_RDWR | O_CLOEXEC);
 	if (fd < 0) {
 		if (errno == EACCES)
 			perror("open /dev/pci0");
@@ -71,10 +74,15 @@ int main(int argc, char **argv) {
 #else
 	/* Linux implementation using sysfs */
 	char path[256];
-	snprintf(path, sizeof(path), "/sys/bus/pci/devices/0000:%02x:%02x.%x/config",
+	int path_len = snprintf(path, sizeof(path), "/sys/bus/pci/devices/0000:%02x:%02x.%x/config",
 		pc_bus, pc_dev, pc_func);
 	
-	int fd = open(path, O_RDWR);
+	if (path_len < 0 || path_len >= (int)sizeof(path)) {
+		fprintf(stderr, "Error: PCI device path too long\n");
+		return -1;
+	}
+	
+	fd = open(path, O_RDWR);
 	if (fd < 0) {
 		perror("open PCI config");
 		fprintf(stderr, "Note: On Linux, you may need root privileges\n");
