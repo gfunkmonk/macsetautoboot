@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <stdint.h>
 
-#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__)
+#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__) || defined(__APPLE__)
 #include <sys/pciio.h>
 #include <sys/ioctl.h>
 #define BSD_PLATFORM 1
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 		close(fd);
 		return -1;
 	}
-	/* Convert to network byte order for consistent display */
+	/* Swap bytes for consistent representation in output */
 	word = htonl(pcio.pi_data);
 #else
 	/* Linux implementation using sysfs */
@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
 		close(fd);
 		return -1;
 	}
-	/* Convert to network byte order for consistent display */
+	/* Swap bytes for consistent representation in output */
 	word = htonl(word);
 #endif
 
