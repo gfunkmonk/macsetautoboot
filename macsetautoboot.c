@@ -12,10 +12,13 @@
 #include <sys/ioctl.h>
 #define BSD_PLATFORM 1
 #elif defined(__linux__)
-#define LINUX_PLATFORM 1
+/* Linux platform - no additional defines needed */
 #else
 #error "Unsupported platform. This program only supports BSD and Linux systems."
 #endif
+
+/* Auto-boot enable value for Mac Mini */
+#define AUTOBOOT_VALUE 0x19
 
 int main(int argc, char **argv) {
 	(void)argc;
@@ -111,7 +114,7 @@ int main(int argc, char **argv) {
 		ret, word);
 
 	// If we get this far, change word and write it back.
-	int nword = (word & 0xffffff00) | 0x19;
+	int nword = (word & 0xffffff00) | AUTOBOOT_VALUE;
 	//int nword = word & 0x00ffffff;
 
 	printf("-> %08x\n", nword);
