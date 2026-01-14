@@ -73,6 +73,7 @@ int main(int argc, char **argv) {
 		close(fd);
 		return -1;
 	}
+	/* Convert to network byte order for consistent display */
 	word = htonl(pcio.pi_data);
 #else
 	/* Linux implementation using sysfs */
@@ -104,7 +105,7 @@ int main(int argc, char **argv) {
 		close(fd);
 		return -1;
 	}
-	/* Linux config space is in native byte order */
+	/* Convert to network byte order for consistent display */
 	word = htonl(word);
 #endif
 

@@ -8,7 +8,7 @@ MAN=    macsetautoboot.8
 UNAME_S := $(shell uname -s)
 
 # On BSD systems (including Darwin/macOS), use bsd.prog.mk
-ifneq ($(filter %BSD Darwin,$(UNAME_S)),)
+ifneq ($(filter FreeBSD OpenBSD NetBSD DragonFly Darwin,$(UNAME_S)),)
 .include <bsd.prog.mk>
 else
 # On other systems (Linux, etc.), use a simple Makefile
