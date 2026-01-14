@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <errno.h>
+#include <arpa/inet.h>
 
 int main(int argc, char **argv) {
 	struct pci_io pcio;
